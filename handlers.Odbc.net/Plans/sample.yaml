@@ -1,0 +1,33 @@
+Name: ODBC_Sample
+Description: Pulls Data by date range
+Actions:
+- Name: Query
+  Handler:
+    Type: Synapse.Handlers.Odbc:OdbcHandler
+    Config:
+      Values:
+        ConnectionString: Driver={SQL Server};Server=~~Server~~;Database=~~Database~~;
+        Expressions:
+        - Find: ~~Server~~
+          ReplaceWith: .\sqlexpress
+        - Find: ~~Database~~
+          ReplaceWith: testDatabase
+      Dynamic:
+      - Name: Server
+        Path: Expressions[0]:ReplaceWith
+      - Name: Database
+        Path: Expressions[1]:ReplaceWith
+  Parameters:
+    Values:
+      ReturnFormat: Json
+      QueryString: Select * FROM [table] where [AUDIT_DTTM] >= '~~StartDate~~' and [AUDIT_DTTM] <= '~~EndDate~~'
+      Expressions:
+      - Find: ~~StartDate~~
+        ReplaceWith: 2014-12-16 00:00:00
+      - Find: ~~EndDate~~
+        ReplaceWith: 2015-05-28 00:00:00
+    Dynamic:
+    - Name: StartDate
+      Path: Expressions[0]:ReplaceWith
+    - Name: EndDate
+      Path: Expressions[1]:ReplaceWith
